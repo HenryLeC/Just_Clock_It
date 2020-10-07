@@ -1,9 +1,9 @@
 import React from "react";
 import "./TopNav.css";
-import firebase from "../../firebase";
+import { auth } from "../../firebase";
 
 function TopNav() {
-  const signOut = () => firebase.auth().signOut();
+  const signOut = () => auth.signOut();
   return (
     <div className="topnav">
       <button onClick={signOut}>Sign Out</button>

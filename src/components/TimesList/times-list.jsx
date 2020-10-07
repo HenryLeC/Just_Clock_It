@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import firebase from "../../firebase";
+import { auth, firestore } from "../../firebase";
 
 const SORT_OPTIONS = {
   TIME_ASC: { column: "time_seconds", direction: "asc" },
@@ -13,8 +13,9 @@ function useTimes(sortBy = "TIME_ASC") {
   const [times, setTimes] = useState([]);
 
   useEffect(() => {
-    const unsubscribe = firebase
-      .firestore()
+    const unsubscribe = firestore
+      .collection("users")
+      .doc(auth.currentUser.uid)
       .collection("times")
       .orderBy(SORT_OPTIONS[sortBy].column, SORT_OPTIONS[sortBy].direction)
       .onSnapshot((snapshot) => {
@@ -32,9 +33,19 @@ function useTimes(sortBy = "TIME_ASC") {
   return times;
 }
 
-export default function Times_List() {
+export default function Times() {
   const [sortBy, setSortBy] = useState("TIME_ASC");
   const times = useTimes(sortBy);
+
+  const deleteItem = (e) => {
+    const id = e.currentTarget.id;
+    firestore
+      .collection("users")
+      .doc(auth.currentUser.uid)
+      .collection("times")
+      .doc(id)
+      .delete();
+  };
 
   return (
     <div>
@@ -57,9 +68,16 @@ export default function Times_List() {
       <ol>
         {times.map((time) => (
           <li key={time.id}>
-            <div className="time-entry">
+            <div className="time-entry" style={{ padding: "0.5rem" }}>
               {time.title}
               <code className="time">{time.time_seconds} seconds</code>
+              <p
+                onClick={deleteItem}
+                style={{ cursor: "pointer", color: "red", margin: "0" }}
+                id={time.id}
+              >
+                X
+              </p>
             </div>
           </li>
         ))}

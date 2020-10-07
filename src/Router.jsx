@@ -3,17 +3,17 @@ import "./index.css";
 import TimesList from "./components/TimesList/TimesList";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import IndexPage from "./components/Index/IndexPage";
-import firebase from "./firebase";
+import { auth } from "./firebase";
 
 export default function Router() {
-  const [auth, setAuth] = useState(false);
+  const [authed, setAuthed] = useState(false);
 
   useEffect(() => {
-    const unregister = firebase.auth().onAuthStateChanged((user) => {
+    const unregister = auth.onAuthStateChanged((user) => {
       if (user) {
-        setAuth(true);
+        setAuthed(true);
       } else {
-        setAuth(false);
+        setAuthed(false);
       }
     });
 
@@ -23,7 +23,7 @@ export default function Router() {
   return (
     <BrowserRouter>
       <Switch>
-        {auth && <Route exact path="/home" component={TimesList} />}
+        {authed && <Route exact path="/home" component={TimesList} />}
         <Route path="/" component={IndexPage} />
       </Switch>
     </BrowserRouter>

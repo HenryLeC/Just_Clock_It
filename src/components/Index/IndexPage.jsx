@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
-import firebase from "../../firebase";
+import firebase, { auth } from "../../firebase";
 import "./IndexPage.css";
 
 export default function IndexPage() {
-  const [auth, setAuth] = useState(false);
+  const [authed, setAuthed] = useState(false);
 
   useEffect(() => {
-    const unregister = firebase.auth().onAuthStateChanged((user) => {
+    const unregister = auth.onAuthStateChanged((user) => {
       if (user) {
-        setAuth(true);
+        setAuthed(true);
       } else {
-        setAuth(false);
+        setAuthed(false);
       }
     });
 
@@ -20,7 +20,7 @@ export default function IndexPage() {
 
   const loginWithGoogle = () => {
     const google = new firebase.auth.GoogleAuthProvider();
-    firebase.auth().signInWithRedirect(google);
+    auth.signInWithRedirect(google);
   };
 
   return (
@@ -29,7 +29,7 @@ export default function IndexPage() {
         <p>Log In With Google</p>
       </div>
 
-      {auth && <Redirect to={"/home"} />}
+      {authed && <Redirect to={"/home"} />}
     </div>
   );
 }

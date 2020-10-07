@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import firebase from "../../firebase";
+import { auth, firestore } from "../../firebase";
 
 export default function AddTimeEntryForm() {
   const [title, setTitle] = useState("");
@@ -7,8 +7,9 @@ export default function AddTimeEntryForm() {
 
   function onSubmit(e) {
     e.preventDefault();
-    firebase
-      .firestore()
+    firestore
+      .collection("users")
+      .doc(auth.currentUser.uid)
       .collection("times")
       .add({
         title,
